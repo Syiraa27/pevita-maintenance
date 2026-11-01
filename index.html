@@ -1,25 +1,36 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#080C14">
-  <title>Pevita Workspace - Server Maintenance</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#07090E">
+  <title>Pevita Workspace &mdash; Scheduled Maintenance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #080C14;
-      --card-bg: rgba(15, 23, 42, 0.85);
+      --bg-base: #07090E;
+      --card-bg: rgba(13, 17, 24, 0.78);
       --card-border: rgba(255, 255, 255, 0.08);
-      --inner-box: rgba(30, 41, 59, 0.55);
-      --text-main: #F8FAFC;
-      --text-muted: #94A3B8;
-      --text-dim: #64748B;
+      --card-highlight: rgba(255, 255, 255, 0.12);
+      --surface-subtle: rgba(22, 29, 41, 0.65);
+      --surface-border: rgba(255, 255, 255, 0.06);
+      
+      --text-primary: #F1F5F9;
+      --text-secondary: #94A3B8;
+      --text-tertiary: #64748B;
+      
       --amber: #F59E0B;
-      --amber-light: #FBBF24;
+      --amber-light: #FCD34D;
       --amber-glow: rgba(245, 158, 11, 0.15);
-      --amber-border: rgba(245, 158, 11, 0.3);
-      --blue-accent: #38BDF8;
-      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      --amber-border: rgba(245, 158, 11, 0.28);
+
+      --cyan: #38BDF8;
+      --cyan-glow: rgba(56, 189, 248, 0.12);
+
+      --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     * {
@@ -30,298 +41,494 @@
     }
 
     body {
-      background-color: var(--bg);
-      color: var(--text-main);
-      font-family: var(--font);
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       min-height: 100vh;
       min-height: 100dvh;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 1.25rem;
+      padding: 1.5rem 1.25rem;
+      position: relative;
+      overflow-x: hidden;
       background-image: 
-        radial-gradient(circle at 50% 15%, rgba(56, 189, 248, 0.07) 0%, transparent 60%),
-        radial-gradient(circle at 50% 85%, rgba(245, 158, 11, 0.04) 0%, transparent 50%);
+        radial-gradient(circle at 50% 12%, rgba(56, 189, 248, 0.06) 0%, transparent 55%),
+        radial-gradient(circle at 50% 88%, rgba(245, 158, 11, 0.05) 0%, transparent 50%),
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
       background-attachment: fixed;
     }
 
-    .container {
-      width: 100%;
-      max-width: 440px;
+    /* Ambient drifting glow effect */
+    .ambient-glow {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 520px;
+      height: 520px;
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.06) 0%, rgba(56, 189, 248, 0.03) 45%, transparent 70%);
+      filter: blur(50px);
+      pointer-events: none;
+      z-index: 0;
+      animation: ambient-drift 12s ease-in-out infinite alternate;
     }
 
+    @keyframes ambient-drift {
+      0% { transform: translate(-50%, -50%) scale(0.92); opacity: 0.6; }
+      50% { transform: translate(-48%, -52%) scale(1.08); opacity: 0.9; }
+      100% { transform: translate(-52%, -48%) scale(0.98); opacity: 0.7; }
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 440px;
+      position: relative;
+      z-index: 1;
+      animation: entrance 0.8s var(--ease-spring) backwards;
+    }
+
+    @keyframes entrance {
+      0% {
+        opacity: 0;
+        transform: translateY(24px) scale(0.97);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* Glassmorphism Card Container */
     .card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: 24px;
-      padding: 2.25rem 1.75rem;
+      border-radius: 28px;
+      padding: 2.25rem 1.85rem;
       text-align: center;
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 
+        0 30px 60px -15px rgba(0, 0, 0, 0.85),
+        inset 0 1px 0 var(--card-highlight);
       position: relative;
       overflow: hidden;
     }
 
+    /* Top sheen accent line */
     .card::before {
       content: '';
       position: absolute;
       top: 0;
-      left: 10%;
-      right: 10%;
+      left: 15%;
+      right: 15%;
       height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.3), transparent);
+      background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.4), rgba(56, 189, 248, 0.4), transparent);
     }
 
-    .badge-pill {
+    /* Status Badge Pill */
+    .badge {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 6px 14px;
+      gap: 9px;
+      padding: 7px 16px;
       border-radius: 9999px;
       background: var(--amber-glow);
       border: 1px solid var(--amber-border);
       color: var(--amber-light);
-      font-size: 0.75rem;
+      font-size: 0.725rem;
       font-weight: 700;
-      letter-spacing: 0.07em;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      margin-bottom: 1.75rem;
+      margin-bottom: 1.85rem;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.12);
     }
 
-    .pulse-dot {
+    .status-sonar {
+      position: relative;
+      width: 8px;
+      height: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .status-sonar-core {
       width: 8px;
       height: 8px;
       border-radius: 50%;
       background: var(--amber);
-      position: relative;
+      box-shadow: 0 0 8px var(--amber);
     }
 
-    .pulse-dot::after {
-      content: '';
+    .status-sonar-wave {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 1.5px solid var(--amber);
+      animation: sonar-ripple 2.4s cubic-bezier(0.1, 0.2, 0.4, 1) infinite;
+    }
+
+    @keyframes sonar-ripple {
+      0% { transform: scale(0.8); opacity: 0.9; }
+      70% { transform: scale(2.8); opacity: 0; }
+      100% { transform: scale(3.2); opacity: 0; }
+    }
+
+    /* Motion Radar / Orbit Visual */
+    .kinetic-visual {
+      position: relative;
+      width: 84px;
+      height: 84px;
+      margin: 0 auto 1.65rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .orbit-ring-outer {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1px dashed rgba(245, 158, 11, 0.35);
+      animation: orbit-spin-clockwise 18s linear infinite;
+    }
+
+    .orbit-ring-inner {
+      position: absolute;
+      inset: 12px;
+      border-radius: 50%;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      animation: orbit-spin-counter 12s linear infinite;
+    }
+
+    .orbit-satellite {
       position: absolute;
       top: -3px;
-      left: -3px;
-      width: 14px;
-      height: 14px;
+      left: calc(50% - 3px);
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
-      background: var(--amber);
-      opacity: 0.4;
-      animation: beacon-pulse 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+      background: var(--amber-light);
+      box-shadow: 0 0 8px var(--amber);
     }
 
-    @keyframes beacon-pulse {
-      0% { transform: scale(0.6); opacity: 0.8; }
-      100% { transform: scale(2.2); opacity: 0; }
-    }
-
-    .icon-box {
-      width: 72px;
-      height: 72px;
-      margin: 0 auto 1.5rem;
-      border-radius: 20px;
-      background: var(--inner-box);
+    .visual-center-box {
+      width: 50px;
+      height: 50px;
+      border-radius: 16px;
+      background: var(--surface-subtle);
       border: 1px solid var(--card-border);
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--amber);
-      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
+      box-shadow: 
+        0 10px 20px -5px rgba(0, 0, 0, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      position: relative;
+      z-index: 2;
     }
 
-    .icon-box svg {
-      width: 36px;
-      height: 36px;
+    .visual-center-box svg {
+      width: 24px;
+      height: 24px;
+      animation: beacon-rotate 8s var(--ease-smooth) infinite;
     }
 
-    .title-group {
-      margin-bottom: 1.25rem;
+    @keyframes beacon-rotate {
+      0% { transform: rotate(0deg); }
+      40% { transform: rotate(90deg); }
+      50% { transform: rotate(90deg); }
+      90% { transform: rotate(180deg); }
+      100% { transform: rotate(180deg); }
     }
 
-    .brand-title {
-      font-size: 1.45rem;
+    @keyframes orbit-spin-clockwise {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes orbit-spin-counter {
+      from { transform: rotate(360deg); }
+      to { transform: rotate(0deg); }
+    }
+
+    /* Headings & Text */
+    .title-box {
+      margin-bottom: 1.15rem;
+    }
+
+    .app-brand {
+      font-size: 1.5rem;
       font-weight: 800;
-      letter-spacing: -0.025em;
-      color: var(--text-main);
+      letter-spacing: -0.03em;
+      color: var(--text-primary);
       margin-bottom: 0.5rem;
     }
 
-    .main-message {
+    .highlight-notice {
       font-size: 1.05rem;
       font-weight: 600;
-      color: var(--blue-accent);
+      color: var(--cyan);
+      letter-spacing: -0.015em;
       line-height: 1.45;
     }
 
-    .sub-message {
-      font-size: 0.875rem;
-      color: var(--text-muted);
+    .sub-notice {
+      font-size: 0.885rem;
+      color: var(--text-secondary);
       line-height: 1.6;
-      margin-bottom: 1.75rem;
+      margin-bottom: 1.85rem;
+      max-width: 380px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
-    .stats-grid {
-      background: var(--inner-box);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 1.15rem;
+    /* Metrics Grid */
+    .telemetry-grid {
+      background: var(--surface-subtle);
+      border: 1px solid var(--surface-border);
+      border-radius: 18px;
+      padding: 1.15rem 1.25rem;
       margin-bottom: 1.75rem;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 1rem;
+      gap: 1.15rem;
       text-align: left;
     }
 
-    .stat-cell {
+    .telemetry-item {
       display: flex;
       flex-direction: column;
+      gap: 4px;
     }
 
-    .stat-label {
-      font-size: 0.7rem;
-      color: var(--text-dim);
+    .telemetry-label {
+      font-size: 0.685rem;
+      color: var(--text-tertiary);
       text-transform: uppercase;
       font-weight: 700;
-      letter-spacing: 0.06em;
-      margin-bottom: 3px;
+      letter-spacing: 0.08em;
     }
 
-    .stat-val {
+    .telemetry-value {
       font-size: 0.875rem;
       font-weight: 600;
-      color: var(--text-main);
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .btn-action {
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--amber);
+      display: inline-block;
+      animation: dot-blink 1.8s ease-in-out infinite alternate;
+    }
+
+    @keyframes dot-blink {
+      0% { opacity: 0.3; transform: scale(0.85); }
+      100% { opacity: 1; transform: scale(1.15); }
+    }
+
+    /* Action Button */
+    .action-btn {
       width: 100%;
-      height: 50px;
-      border-radius: 14px;
+      height: 52px;
+      border-radius: 16px;
       border: 1px solid var(--card-border);
-      background: var(--inner-box);
-      color: var(--text-main);
+      background: linear-gradient(180deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%);
+      color: var(--text-primary);
       font-family: inherit;
-      font-size: 0.925rem;
+      font-size: 0.935rem;
       font-weight: 600;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 
+        0 10px 25px -8px rgba(0, 0, 0, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      transition: all 0.25s var(--ease-spring);
     }
 
-    .btn-action:active {
+    .action-btn:hover {
+      border-color: rgba(255, 255, 255, 0.18);
+      background: linear-gradient(180deg, rgba(38, 52, 75, 0.85) 0%, rgba(20, 30, 52, 0.98) 100%);
+      transform: translateY(-1px);
+    }
+
+    .action-btn:active {
       transform: scale(0.98);
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(15, 23, 42, 1);
     }
 
-    .btn-action svg {
+    .action-btn svg {
       width: 18px;
       height: 18px;
-      transition: transform 0.5s ease;
+      color: var(--cyan);
+      transition: transform 0.5s var(--ease-spring);
     }
 
-    .btn-action.loading svg {
-      animation: spin 0.8s linear infinite;
+    .action-btn.is-syncing svg {
+      animation: spin-action 0.8s linear infinite;
     }
 
-    @keyframes spin {
-      100% { transform: rotate(360deg); }
+    @keyframes spin-action {
+      to { transform: rotate(360deg); }
     }
 
-    .countdown-bar {
-      margin-top: 1rem;
+    /* Countdown Section */
+    .countdown-wrapper {
+      margin-top: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 0.775rem;
+      color: var(--text-tertiary);
+    }
+
+    .countdown-timer {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    /* Footer */
+    .footer-bar {
+      margin-top: 1.65rem;
       font-size: 0.75rem;
-      color: var(--text-dim);
-    }
-
-    .footer {
-      margin-top: 1.5rem;
-      font-size: 0.75rem;
-      color: var(--text-dim);
+      color: var(--text-tertiary);
       text-align: center;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.025em;
+      line-height: 1.5;
+    }
+
+    .footer-bar span {
+      opacity: 0.5;
+      margin: 0 4px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
+
+  <div class="ambient-glow"></div>
+
+  <main class="wrapper">
     <div class="card">
-      <div class="badge-pill">
-        <span class="pulse-dot"></span>
-        <span>Maintenance Active</span>
+      
+      <!-- Status Badge -->
+      <div class="badge">
+        <span class="status-sonar">
+          <span class="status-sonar-wave"></span>
+          <span class="status-sonar-core"></span>
+        </span>
+        <span>Scheduled Maintenance</span>
       </div>
 
-      <div class="icon-box">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
-        </svg>
-      </div>
-
-      <div class="title-group">
-        <h1 class="brand-title">Pevita Workspace</h1>
-        <p class="main-message">Pevita Workspace maintenance, wait a few minute.</p>
-      </div>
-
-      <p class="sub-message">Sistem cloud sedang melakukan sinkronisasi database antrean dan pemeliharaan performa berkala. Layanan akan kembali aktif sesaat lagi.</p>
-
-      <div class="stats-grid">
-        <div class="stat-cell">
-          <span class="stat-label">Status Server</span>
-          <span class="stat-val" style="color: var(--amber-light);">Syncing / Standby</span>
+      <!-- Kinetic Orbit Graphic -->
+      <div class="kinetic-visual">
+        <div class="orbit-ring-outer">
+          <div class="orbit-satellite"></div>
         </div>
-        <div class="stat-cell">
-          <span class="stat-label">Core Engine</span>
-          <span class="stat-val">v2.0.3 Stable</span>
-        </div>
-        <div class="stat-cell">
-          <span class="stat-label">Akses Layanan</span>
-          <span class="stat-val">Ditutup Sementara</span>
-        </div>
-        <div class="stat-cell">
-          <span class="stat-label">Estimasi</span>
-          <span class="stat-val" style="color: var(--blue-accent);">5 - 10 Menit</span>
+        <div class="orbit-ring-inner"></div>
+        <div class="visual-center-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+          </svg>
         </div>
       </div>
 
-      <button id="btnRefresh" class="btn-action" onclick="refreshStatus()">
+      <!-- Text Section -->
+      <div class="title-box">
+        <h1 class="app-brand">Pevita Workspace</h1>
+        <p class="highlight-notice">Pevita Workspace maintenance, wait a few minute.</p>
+      </div>
+
+      <p class="sub-notice">
+        Cloud infrastructure and database synchronization are currently underway. Core services and access nodes will resume momentarily.
+      </p>
+
+      <!-- Telemetry Grid -->
+      <div class="telemetry-grid">
+        <div class="telemetry-item">
+          <span class="telemetry-label">System State</span>
+          <span class="telemetry-value" style="color: var(--amber-light);">
+            <span class="live-dot"></span> Syncing
+          </span>
+        </div>
+        <div class="telemetry-item">
+          <span class="telemetry-label">Engine Release</span>
+          <span class="telemetry-value">v2.0.3 Prod</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="telemetry-label">Service Gate</span>
+          <span class="telemetry-value">Paused</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="telemetry-label">Estimated Window</span>
+          <span class="telemetry-value" style="color: var(--cyan);">5 – 10 Min</span>
+        </div>
+      </div>
+
+      <!-- Action Button -->
+      <button id="btnAction" class="action-btn" onclick="triggerStatusCheck()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
         </svg>
-        <span id="btnText">Periksa Status Server</span>
+        <span id="btnLabel">Check Server Status</span>
       </button>
 
-      <div class="countdown-bar">
-        Auto-refresh dalam <span id="timerText" style="color: var(--text-muted); font-weight: 600;">60</span> detik
+      <!-- Auto-refresh counter -->
+      <div class="countdown-wrapper">
+        <span>Auto-refreshing in</span>
+        <span id="secondsRemaining" class="countdown-timer">60</span>
+        <span>seconds</span>
       </div>
+
     </div>
 
-    <div class="footer">
-      Pevita Workspace &bull; Cloud Infrastructure &bull; 2026
-    </div>
-  </div>
+    <!-- Footer -->
+    <footer class="footer-bar">
+      Pevita Workspace Cloud Infrastructure <span>&bull;</span> Systems Nominal
+    </footer>
+  </main>
 
   <script>
-    let timeLeft = 60;
-    const timerElem = document.getElementById('timerText');
-    const btn = document.getElementById('btnRefresh');
-    const btnText = document.getElementById('btnText');
+    let secondsLeft = 60;
+    const timerDisplay = document.getElementById('secondsRemaining');
+    const actionBtn = document.getElementById('btnAction');
+    const labelSpan = document.getElementById('btnLabel');
 
-    setInterval(() => {
-      timeLeft--;
-      if (timeLeft <= 0) {
-        refreshStatus();
+    const countdownInterval = setInterval(() => {
+      secondsLeft--;
+      if (secondsLeft <= 0) {
+        clearInterval(countdownInterval);
+        triggerStatusCheck();
       } else {
-        timerElem.textContent = timeLeft;
+        timerDisplay.textContent = secondsLeft;
       }
     }, 1000);
 
-    function refreshStatus() {
-      btn.classList.add('loading');
-      btnText.textContent = 'Memeriksa...';
+    function triggerStatusCheck() {
+      actionBtn.classList.add('is-syncing');
+      labelSpan.textContent = 'Querying Gateway...';
+      
       setTimeout(() => {
         window.location.reload();
-      }, 500);
+      }, 650);
     }
   </script>
 </body>
